@@ -1,6 +1,6 @@
 {
   "name": "hydrogen-energy-ui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "GUI for hydrogen energy stand",
   "repository": {
     "url": "https://github.com/SonikdDropout/hydrogen-energy-ui.git"
@@ -38,7 +38,7 @@
     "chart.js": "^2.9.3",
     "chartjs-plugin-zoom": "^0.7.5",
     "drivelist": "^8.0.9",
-    "excel4node": "^1.7.2",
+    "exceljs": "^4.2.1",
     "serialport": "^8.0.7",
     "usb-detection": "^4.7.0"
   },

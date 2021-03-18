@@ -1,92 +1,78 @@
-const { Workbook } = require('excel4node');
-const { getFileDate } = require('./others');
 const path = require('path');
+const ExcelJS = require('exceljs');
+const { writeFile } = require('fs');
 
-let wb,
-  ws = [],
-  fileName,
-  headerStyle,
-  dataStyle,
-  row = 1;
+let file;
+let fileIdx = 1;
 
-function createFile(options) {
-  fileName = options.name + '_' + getFileDate();
-  wb = new Workbook();
-  ws = [];
-  row = 1;
-  if (!headerStyle) createStyles();
-  addWorksheets(options.worksheets, options.headers);
-}
-
-function addWorksheets(worksheets, headers) {
-  for (let i = 0; i < headers.length; ++i) {
-    ws[i] = wb.addWorksheet(worksheets[i]);
-    for (let j = 0; j < headers[i].length; ++j) {
-      ws[i]
-        .cell(row, j + 1)
-        .string(headers[i][j])
-        .style(headerStyle);
-    }
+function createFile({ name, headers, worksheets: ws }) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheets = [];
+  for (let i = 0; i < ws.length; ++i) {
+    worksheets.push(workbook.addWorksheet(ws[i]));
+    worksheets[i].columns = headers[i].map((header) => ({
+      header,
+      width: header.length + 3,
+    }));
   }
-  row++;
+  file = {
+    name,
+    workbook,
+    worksheets,
+  };
 }
 
 function writeRows(rows) {
-  if (!ws[0]) return;
-  for (let j = 0; j < rows.length; ++j) {
-    for (let k = 0; k < rows[j].length; ++k) {
-      ws[j]
-        .cell(row, k + 1)
-        .number(rows[j][k])
-        .style(dataStyle);
-    }
-  }
-  row++;
+  if (!file) return;
+  for (let i = 0; i < rows.length; ++i) file.worksheets[i].addRow(rows[i]);
 }
 
 function saveFile(dir, cb) {
-  const logPath = path.join(dir, fileName + '.xlsx');
-  console.log('writing log to:', logPath);
-  delayedCb = (...args) => setTimeout(cb, 60 * 1000, ...args);
-  wb.write(logPath, delayedCb);
+  for (const ws of file.worksheets) stylizeSheet(ws);
+  file.workbook.xlsx
+    .writeBuffer()
+    .then((blob) =>
+      writeFile(
+        path.join(dir, `${file.name}_${fileIdx++}.xlsx`),
+        blob,
+        cb
+      )
+    );
 }
 
-function createStyles() {
-  headerStyle = wb.createStyle({
-    font: {
-      bold: true,
-      color: 'ffffff',
-    },
-    fill: {
+function stylizeSheet(ws) {
+  var borderline = { style: 'thin' };
+  var borderStyle = {
+    top: borderline,
+    left: borderline,
+    bottom: borderline,
+    right: borderline,
+  };
+
+  rows = ws.getRows(2, ws.rowCount - 1);
+  rows.forEach((r) => {
+    for (let c = 1; c <= ws.columnCount; c++) {
+      let cell = r.getCell(c);
+      cell.border = borderStyle;
+      cell.font = { name: 'Arial', size: 10, bold: false };
+    }
+  });
+
+  headerRow = ws.getRow(1);
+  for (let c = 1; c <= ws.columnCount; c++) {
+    let cell = headerRow.getCell(c);
+    cell.font = { name: 'Arial', size: 10, bold: true };
+    cell.fill = {
       type: 'pattern',
-      patternType: 'solid',
-      fgColor: '8bc041',
-    },
-  });
-  headerStyle.border = generateBorders();
-  dataStyle = wb.createStyle({
-    alignment: {
-      horizontal: 'right',
-    },
-  });
-  dataStyle.border = generateBorders();
-}
-
-function generateBorders() {
-  return ['left', 'right', 'top', 'bottom'].reduce(
-    (acc, key) => {
-      acc[key] = {
-        style: 'thin',
-        color: 'black',
-      };
-      return acc;
-    },
-    { outline: false }
-  );
+      pattern: 'darkVertical',
+      fgColor: { argb: 'FFc0c0c0' },
+    };
+    cell.border = borderStyle;
+  }
 }
 
 module.exports = {
-  createFile,
   writeRows,
-  saveFile
+  createFile,
+  saveFile,
 };
