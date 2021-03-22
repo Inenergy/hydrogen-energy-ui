@@ -28,15 +28,14 @@
   function drop(node, { duration }) {
     return {
       duration,
-      css: t => `max-height: ${t * h}%`,
+      css: (t) => `max-height: ${t * h}%`,
     };
   }
 
   function selectOption(e) {
     optionsVisible = false;
     const v = e.currentTarget.dataset.value;
-    console.log(v);
-    onChange(v);
+    if (v != selected.value) onChange(v);
   }
 </script>
 
@@ -47,7 +46,8 @@
     bind:this={select}
     class:disabled
     class:active
-    class:expand={optionsVisible}>
+    class:expand={optionsVisible}
+  >
     <div class="selected" on:click={toggleOptions}>
       <span class="label" title={selected.label}>{$__(selected.label)}</span>
       <span class="arrow" />
