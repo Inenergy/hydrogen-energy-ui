@@ -17,8 +17,8 @@
 
   onMount(() => {
     chartConfig = configureChart({
-      x: selectedX.symbol,
-      y: selectedY.symbol,
+      x: $__(selectedX.symbol),
+      y: $__(selectedY.symbol),
     });
     chart = new Chart(
       document.getElementById('chart').getContext('2d'),
@@ -29,7 +29,7 @@
   });
 
   function monitorLegendLng() {
-    __.subscribe(t => {
+    __.subscribe((t) => {
       chart.data.datasets.forEach((ds, i) => {
         ds.label = t(chartConfig.data.datasets[i].label);
       });
@@ -86,7 +86,6 @@
   let selectedX = xOptions[0],
     selectedY = yOptions[0],
     pStorage = new PointsStorage(),
-    usbAttached = false,
     noData = true,
     selectedSubject = subjectOptions[0],
     isDrawing,
@@ -99,11 +98,6 @@
 
   $: startDisabled = !selectedSubject;
 
-  function selectSubject(v) {
-    selectedSubject = subjectOptions.find(s => s.value == v);
-    resetCols(true, true);
-  }
-
   function resetCols(x, y) {
     if (y) pStorage.setYCol(selectedY.name);
     if (x) pStorage.setXCol(selectedX.name);
@@ -112,13 +106,17 @@
 
   function selectY(n) {
     selectedY = yOptions[n];
-    chart.options.scales.yAxes[0].scaleLabel.labelString = selectedY.symbol;
+    chart.options.scales.yAxes[0].scaleLabel.labelString = $__(
+      selectedY.symbol
+    );
     resetCols(false, true);
   }
 
   function selectX(n) {
     selectedX = xOptions[n];
-    chart.options.scales.xAxes[0].scaleLabel.labelString = selectedX.symbol;
+    chart.options.scales.xAxes[0].scaleLabel.labelString = $__(
+      selectedX.symbol
+    );
     resetCols(true);
   }
 
@@ -136,7 +134,7 @@
     pStorage.clear();
     timeStart = Date.now();
     noData = false;
-    unsubscribeData = data.subscribe(d => {
+    unsubscribeData = data.subscribe((d) => {
       const row = getEntries(d);
       pStorage.addRow(row);
       ipcRenderer.send('logRow', getLogRow(row));
@@ -157,8 +155,8 @@
   }
 
   function getLogRow(row) {
-    return subjects.map(id =>
-      [row['time' + id]].concat(pointEntries.map(name => row[name + id]))
+    return subjects.map((id) =>
+      [row['time' + id]].concat(pointEntries.map((name) => row[name + id]))
     );
   }
 
@@ -218,7 +216,8 @@
           order={2}
           onChange={selectX}
           options={xOptions}
-          selected={selectedX} />
+          selected={selectedX}
+        />
       </div>
       <div class="select-field">
         <span class="select-label">{$__('y axis')}</span>
@@ -226,7 +225,8 @@
           order={3}
           onChange={selectY}
           options={yOptions}
-          selected={selectedY} />
+          selected={selectedY}
+        />
       </div>
 
       <Button on:click={toggleDrawing} disabled={startDisabled}>
