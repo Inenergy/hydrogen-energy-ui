@@ -37,10 +37,6 @@
     });
   }
 
-  ipcRenderer.send('usbStorageRequest');
-  ipcRenderer.on('usbConnected', () => (usbAttached = true));
-  ipcRenderer.on('usbDisconnected', () => (usbAttached = false));
-
   const subjects = ['1', '2', 'Common'];
 
   const pointEntries = ['current', 'voltage', 'power', 'consumption'];
