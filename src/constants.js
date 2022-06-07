@@ -153,8 +153,8 @@ const CONNECTION_TYPES = [
 ];
 
 const SETTINGS_PATH = IS_RPI
-  ? '/home/pi/hydrogen-energy-ui/settings.json'
-  : path.join(__dirname, '..', 'settings.json');
+  ? '/home/pi/.inenergy/config.json'
+  : path.join(__dirname, '..', 'config.json');
 
 module.exports = {
   IS_RPI,
