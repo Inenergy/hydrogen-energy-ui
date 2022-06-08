@@ -49,7 +49,7 @@
   },
   "build": {
     "directories": {},
-    "rebuildDependencies": false,
+    "npmRebuild": false,
     "linux": {
       "executableName": "hydrogen-energy-ui",
       "icon": "doc/icon.png",
