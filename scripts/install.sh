@@ -5,8 +5,8 @@ npm i
 npm run build
 
 # MAIN APP AUTOSTART
-mv dist/hydrogen-energy-ui* dist/hydrogen-energy-ui.AppImage
-chmod +x dist/hydrogen-energy-ui.AppImage
-echo '~/inengergy-gui/hydrogen-energy-ui/dist/hydrogen-energy-ui.AppImage > ~/.inenergy/hydrogen-energy-ui.log' > ~/.config/openbox/autostart
+chmod +x dist/hydrogen-energy-ui*.AppImage
+cp dist/hydrogen-energy-ui*.AppImage ../../dist/
 mkdir ~/.inenergy
-echo "{}" > ~/.inenergy/config.json
+echo '~/inengergy-gui/dist/hydrogen-energy-ui*.AppImage > ~/.inenergy/hydrogen-energy-ui.log' > ~/.config/openbox/autostart
+echo '{"CRITICAL_CONCENTRATION": 75}' > ~/.inenergy/config.json
