@@ -2,10 +2,14 @@ const { mergeRename } = require('./utils/others');
 const path = require('path');
 
 const IS_RPI = process.platform === 'linux' && process.arch == 'arm';
+
+// Идентификатор серийного порта для linux и windows
 const PORT = {
   name: IS_RPI ? '/dev/serial0' : 'COM5',
   baudRate: 230400,
 };
+
+// разделители в двоичном виде
 const SEPARATORS = Buffer.alloc(4);
 SEPARATORS.writeUInt16BE(6891);
 SEPARATORS.writeUInt16BE(25500, 2);
@@ -18,6 +22,7 @@ const STATES = {
 
 const LOW_PRESSURE = 0.2;
 
+// двухбайтовые значения уникальные для каждого топливника
 const SINGLE_DATA = {
   voltage: {
     symbol: 'U',
@@ -53,6 +58,7 @@ const SINGLE_DATA = {
   },
 };
 
+// двухбайтовые значения общие для топливников
 const COMMON_DATA = {
   tankTemp: {
     symbol: 'T<sub>H<sub>2</sub></sub>',
@@ -87,6 +93,7 @@ const COMMON_DATA = {
   },
 };
 
+// однобайтовые значения
 const STATE_DATA = {
   loadMode: 0,
   hydrogenConcentration: 0,
@@ -96,13 +103,18 @@ const STATE_DATA = {
   connectionType: 0,
 };
 
+// переименование индивидуальныех значений в соответсвии с номерами топливников
 const BOTH_DATA = mergeRename([SINGLE_DATA, SINGLE_DATA], [1, 2]);
 
+// слияние всех двухбайтовые значений в одну структуру
 const FC_DATA = {
   ...BOTH_DATA,
   ...COMMON_DATA,
 };
 
+/* Комманды с автоматической простановкой их идентификаторов по индексу в массиве
+Либо просто массив для комманд без ввода данных
+Либо функция, которая принимает значение и возвращает массив для отправки */
 const COMMANDS = [
   'closeValve1',
   'openValve1',
@@ -129,6 +141,7 @@ const COMMANDS = [
   }
 );
 
+// ограничения полей ввода
 const CONSTRAINTS = {
   currentSeries: [0.1, 5],
   currentSingle: [0.1, 5],
@@ -144,6 +157,7 @@ const CONSTRAINTS = {
   blowPeriod: [1, 100],
 };
 
+// возможные типы соединений
 const CONNECTION_TYPES = [
   'series',
   'parallel',
@@ -152,6 +166,7 @@ const CONNECTION_TYPES = [
   'not selected',
 ];
 
+// путь к файлу, в котором сохраняются значения от калибровки
 const SETTINGS_PATH = IS_RPI
   ? '/home/pi/.inenergy/config.json'
   : path.join(__dirname, '..', 'config.json');
