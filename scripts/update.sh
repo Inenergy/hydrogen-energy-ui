@@ -1,6 +1,14 @@
 set -e
 
-cd ~/hydrogen-energy-ui
+cd "$( dirname "$0" )/.."
+
+# MAIN APP BUILD
 git pull
+rm -rf dist
 npm run build
-reboot
+
+# MAIN APP INSTALL
+chmod +x dist/redox-ui*.AppImage
+rm ~/inenergy-gui/dist/redox-ui*
+mv dist/redox-ui*.AppImage ~/inenergy-gui/dist/
+sudo reboot
