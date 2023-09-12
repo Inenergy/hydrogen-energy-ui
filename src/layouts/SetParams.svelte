@@ -51,13 +51,13 @@
           <figcaption>{$__('blow valve')}</figcaption>
         </figure>
         <div class="input-field">
-          <div class="label">{$__('blow period')}, {$__('s')}</div>
+          <div class="label">{$__('blow period')}, {$__('s', true)}</div>
           <RangeInput
             name={pos}
             onChange={setBlowPeriod}
             range={CONSTRAINTS.blowPeriod}
             defaultValue={initialData['blowPeriod' + pos].value} />
-          <div class="label">{$__('blow duration')}, {$__('ms')}</div>
+          <div class="label">{$__('blow duration')}, {$__('ms', true)}</div>
           <RangeInput
             name={pos}
             onChange={setBlowDuration}

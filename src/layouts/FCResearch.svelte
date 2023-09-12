@@ -186,7 +186,7 @@
               <li>
                 <span class="label">
                   {@html $__(initialData[characteristic + pos].symbol)}
-                  , {$__(initialData[characteristic + pos].units)}
+                  , {$__(initialData[characteristic + pos].units, true)}
                 </span>
                 <strong class="value">
                   {#if characteristic == 'current' && $data[characteristic + pos].value < 0.04}
@@ -205,7 +205,7 @@
             <li>
               <span class="label">
                 {@html $__(initialData[characteristic].symbol)}
-                , {$__(initialData[characteristic].units)}
+                , {$__(initialData[characteristic].units, true)}
               </span>
               <strong class="value">
                 {#if characteristic.startsWith('current') && $data[characteristic].value < 0.04}
